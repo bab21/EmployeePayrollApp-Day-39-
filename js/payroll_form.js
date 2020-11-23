@@ -1,4 +1,4 @@
-let numEmployees;
+
 let isUpdate = false;
 let employeePayrollObj ={};
 
@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded',(event)=>{
     const textError=document.querySelector('.text-error');
     empList= getEmployeePayrollDataFromStorage();
     
-    numEmployees=empList.length;
+    // numEmployees=empList.length;
     name.addEventListener('input',function(){
         if(name.value.length==0){
             textError.textContent="";
@@ -39,6 +39,7 @@ const getEmployeePayrollDataFromStorage = ()=> {
 const save = (event)=>{
     event.preventDefault();
     event.stopPropagation();
+    console.log("called save method");
     try{
         setEmployeePayrollObject();
         createAndUpdateStorage();
@@ -104,12 +105,13 @@ function createAndUpdateStorage(){
     }else{
         employeePayrollList = [createEmployeePayrollData()];
     }
+    console.log("List now"+employeePayrollList);
     localStorage.setItem("EmployeePayrollList",JSON.stringify(employeePayrollList));
 }
 
 const creteEmployeePayrollData = (id) => {
     let employeePayrollData =new EmployeePayrollData();
-    if(!id) employeePayrollData.id = createNewEmployeeId();
+    if(!id) employeePayrollData.id = getMaxValueOfEmployeeID()+1;
     else employeePayrollData.id=id;
     setEmployeePayrollData(employeePayrollData);
     return employeePayrollData;
@@ -153,8 +155,8 @@ const createEmployeePayrollData = () =>{
         setTextValue('.text-error',e);
         throw e;
     }
-    console.log("num of employees"+numEmployees);
-    employeePayrollData.id = numEmployees;
+    // console.log("num of employees"+numEmployees);
+    employeePayrollData.id = getMaxValueOfEmployeeID()+1;
     employeePayrollData.profilePic = getSelectedValues('[name=profile]').pop();
     employeePayrollData.gender = getSelectedValues('[name=gender]').pop();
     employeePayrollData.departments=getSelectedValues('[name=department]');
@@ -228,4 +230,14 @@ const stringifyDate = (date) => {
     const newDate =!date?"undefined":
                     new Date(Date.parse(date)).toLocaleDateString('en-GB',options);
     return newDate;
+}
+
+const getMaxValueOfEmployeeID =()=>{
+    employeePayrollList =  getEmployeePayrollDataFromStorage();
+    let max = employeePayrollList
+                .map(employeeData => employeeData._id)
+                .reduce(function(a, b) {
+                    return Math.max(a, b);
+                });
+    return max;
 }
