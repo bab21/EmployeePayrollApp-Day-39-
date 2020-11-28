@@ -44,8 +44,10 @@ const save = (event)=>{
         setEmployeePayrollObject();
         createAndUpdateStorage();
         resetForm();
+        console.log("After reset");
         window.location.replace(site_properties.home_page);
     }catch(e){
+        console.log(e);
         return;
     }
 }
@@ -67,10 +69,10 @@ const resetForm = ()=>{
     unsetSelectedValues('[name=profile]');
     unsetSelectedValues('[name=gender]');
     unsetSelectedValues('[name=department]');
-    setValue('#salary','');
+    setValue('#salary','400000');
     setValue('#notes','');
     setValue('#day','1');
-    setValue('#month','January');
+    setValue('#month','Jan');
     setValue('#year','2020');
 }
 
@@ -234,6 +236,7 @@ const stringifyDate = (date) => {
 
 const getMaxValueOfEmployeeID =()=>{
     employeePayrollList =  getEmployeePayrollDataFromStorage();
+    if(employeePayrollList.length==0)return 0;
     let max = employeePayrollList
                 .map(employeeData => employeeData._id)
                 .reduce(function(a, b) {
